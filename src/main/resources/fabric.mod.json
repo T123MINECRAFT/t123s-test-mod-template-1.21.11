@@ -8,8 +8,8 @@
 		"T123Minecraft"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/T123MINECRAFT/t123s-test-mod-template-1.21.11",
+		"issues": "https://github.com/T123MINECRAFT/t123s-test-mod-template-1.21.11/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/t123s-test-mod/icon.png",
