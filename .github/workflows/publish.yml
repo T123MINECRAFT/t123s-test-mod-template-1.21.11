@@ -29,14 +29,13 @@ jobs:
         run: ./gradlew clean build
 
       - name: List built files
-        run: ls -R build/libs/
+        run: ls -R build/libs/t123s-test-mod-0.1.0-alpha+fabric-1.21.11.jar
 
 
       - name: Publish to GitHub & Modrinth
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          files: |
-            build/libs/!(*-sources).jar
+          files: build/libs/*.jar
 
           # GitHub 配置
           github-token: ${{ secrets.GITHUB_TOKEN }}
