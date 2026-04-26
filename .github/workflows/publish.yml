@@ -3,7 +3,7 @@ name: Publish Mod to GitHub Releases & Modrinth
 on:
   push:
     tags:
-      - '[0-9]+*'
+      - '[0-9]+*'          # 匹配以数字开头的标签，如 0.1.0-alpha.1
 
 jobs:
   publish:
@@ -33,9 +33,9 @@ jobs:
       - name: Build version strings
         id: version_strings
         run: |
-          TAG="${{ github.ref_name }}"                     # 0.1.0-alpha.1
-          MODRINTH_VERSION="${TAG}-fabric+1.21.1"          # 0.1.0-alpha.1-fabric+1.21.1
-          FILE_VERSION="t123s_test_mod-${MODRINTH_VERSION}" # t123s_test_mod-0.1.0-alpha.1-fabric+1.21.1
+          TAG="${{ github.ref_name }}"                     # 例如 0.1.0-alpha.1
+          MODRINTH_VERSION="${TAG}-fabric+1.21.11"         # Modrinth 显示: 0.1.0-alpha.1-fabric+1.21.11
+          FILE_VERSION="t123s_test_mod-${MODRINTH_VERSION}" # 文件名: t123s_test_mod-0.1.0-alpha.1-fabric+1.21.11
           echo "modrinth_version=${MODRINTH_VERSION}" >> $GITHUB_OUTPUT
           echo "file_version=${FILE_VERSION}" >> $GITHUB_OUTPUT
 
@@ -51,5 +51,5 @@ jobs:
           version: ${{ steps.version_strings.outputs.modrinth_version }}
           version-type: ${{ contains(github.ref_name, 'alpha') && 'alpha' || contains(github.ref_name, 'beta') && 'beta' || contains(github.ref_name, 'rc') && 'rc' || contains(github.ref_name, 'pre') && 'pre' || 'release' }}
           loaders: fabric
-          game-versions: 1.21.1
+          game-versions: 1.21.11
           java: Java 21
