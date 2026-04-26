@@ -30,12 +30,12 @@ jobs:
       - name: List built files
         run: ls -R build/libs/
 
-      - name: Generate version strings
+      - name: Build version strings
         id: version_strings
         run: |
-          TAG="${{ github.ref_name }}"
-          MODRINTH_VERSION="${TAG}-fabric+1.21.11"
-          FILE_VERSION="t123s_test_mod-${MODRINTH_VERSION}"
+          TAG="${{ github.ref_name }}"                     # 例如 0.1.0-alpha.1
+          MODRINTH_VERSION="${TAG}-fabric+1.21.11"         # Modrinth 版本号
+          FILE_VERSION="t123s-test-mod-${MODRINTH_VERSION}" # 文件名前缀匹配
           echo "modrinth_version=${MODRINTH_VERSION}" >> $GITHUB_OUTPUT
           echo "file_version=${FILE_VERSION}" >> $GITHUB_OUTPUT
 
