@@ -28,8 +28,12 @@ jobs:
       - name: Build Mod
         run: ./gradlew clean build
 
-      - name: List built files
-        run: ls -R build/libs/t123s-test-mod-0.1.0-alpha+fabric-1.21.11.jar
+      - name: Build full version string
+        id: full_version
+        run: |
+          TAG="${{ github.ref_name }}"          # 例如 0.1.0-alpha.1
+          FULL="t123s_test_mod-${TAG}-fabric+1.21.11"
+          echo "version=${FULL}" >> $GITHUB_OUTPUT
 
 
       - name: Publish to GitHub & Modrinth
@@ -40,7 +44,13 @@ jobs:
           # GitHub 配置
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # 自动判断是否为预发布版本（标签含 beta/alpha/rc/pre 则为 true）
-          github-prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') || contains(github.ref_name, 'pre') }}
+          github-prerelease:
+            ${{
+            contains(github.ref_name, 'alpha') ||
+            contains(github.ref_name, 'beta') ||
+            contains(github.ref_name, 'rc') ||
+            contains(github.ref_name, 'pre')
+            }}
 
           # Modrinth 配置（将 token 存入 GitHub Secrets）
           modrinth-id: 5HrgYW5Z
@@ -48,9 +58,15 @@ jobs:
 
           # 版本元数据
           name: ${{ github.ref_name }}
-          version: ${{ github.ref_name }}
+          version: ${{ steps.full_version.outputs.version }}
           version-type: |
-            ${{ contains(github.ref_name, 'beta') && 'beta' || (contains(github.ref_name, 'alpha') && 'alpha' || 'release') }}
+            ${{ 
+              contains(github.ref_name, 'alpha') && 'alpha' ||
+              contains(github.ref_name, 'beta') && 'beta' ||
+              contains(github.ref_name, 'rc') && 'rc' ||
+              contains(github.ref_name, 'pre') && 'pre' ||
+              'release'
+            }}
           loaders: fabric
           game-versions: 1.21.11          # ✅ 修正版本号（你写的是 1.21.11，Minecraft 无此版本）
           java: Java 21
