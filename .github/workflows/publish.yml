@@ -48,7 +48,6 @@ jobs:
           version: ${{ github.ref_name }}
           version-type: |
             ${{ contains(github.ref_name, 'beta') && 'beta' || (contains(github.ref_name, 'alpha') && 'alpha' || 'release') }}
-          changelog-file: CHANGELOG.md   # 确保仓库根目录有这个文件
           loaders: fabric
           game-versions: 1.21.11          # ✅ 修正版本号（你写的是 1.21.11，Minecraft 无此版本）
           java: Java 21
