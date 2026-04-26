@@ -3,7 +3,7 @@ name: Publish Mod to GitHub Releases & Modrinth
 on:
   push:
     tags:
-      - '[0-9]+*'          # 匹配以数字开头的标签，如 0.1.0-alpha.1
+      - '[0-9]+*'
 
 jobs:
   publish:
@@ -30,12 +30,12 @@ jobs:
       - name: List built files
         run: ls -R build/libs/
 
-      - name: Build version strings
+      - name: Generate version strings
         id: version_strings
         run: |
-          TAG="${{ github.ref_name }}"                     # 例如 0.1.0-alpha.1
-          MODRINTH_VERSION="${TAG}-fabric+1.21.11"         # Modrinth 显示: 0.1.0-alpha.1-fabric+1.21.11
-          FILE_VERSION="t123s_test_mod-${MODRINTH_VERSION}" # 文件名: t123s_test_mod-0.1.0-alpha.1-fabric+1.21.11
+          TAG="${{ github.ref_name }}"
+          MODRINTH_VERSION="${TAG}-fabric+1.21.11"
+          FILE_VERSION="t123s_test_mod-${MODRINTH_VERSION}"
           echo "modrinth_version=${MODRINTH_VERSION}" >> $GITHUB_OUTPUT
           echo "file_version=${FILE_VERSION}" >> $GITHUB_OUTPUT
 
