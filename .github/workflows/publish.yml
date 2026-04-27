@@ -3,7 +3,7 @@ name: Publish Mod to GitHub Releases & Modrinth
 on:
   push:
     tags:
-      - '[0-9]+*'
+      - '[0-9]+*'          # 匹配 X.Y.Z-alpha.x 格式
 
 jobs:
   publish:
@@ -28,21 +28,38 @@ jobs:
         run: ./gradlew clean build
 
       - name: List built files
-        run: ls -R build/libs/
+        id: list
+        run: |
+          ls -R build/libs/
+          # 找到第一个非 sources/javadoc 的 jar 文件
+          JAR_FILE=$(ls build/libs/t123s-test-mod-*.jar | grep -v sources | grep -v javadoc | head -n1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "No main jar found!"
+            exit 1
+          fi
+          echo "jar_file=${JAR_FILE}" >> $GITHUB_OUTPUT
+          
+          # 提取 loader 和 game version
+          BASENAME=$(basename "$JAR_FILE" .jar)
+          # 假设格式：t123s-test-mod-版本-loader+gameversion
+          LOADER=$(echo "$BASENAME" | sed -E 's/.*-([a-z]+)\+.*/\1/')
+          GAME_VERSION=$(echo "$BASENAME" | sed -E 's/.*\+//')
+          echo "loader=${LOADER}" >> $GITHUB_OUTPUT
+          echo "game_version=${GAME_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Build version strings
         id: version_strings
         run: |
-          TAG="${{ github.ref_name }}"                     # 例如 0.1.0-alpha.1
-          MODRINTH_VERSION="${TAG}-fabric+1.21.11"         # Modrinth 版本号
-          FILE_VERSION="t123s-test-mod-${MODRINTH_VERSION}" # 文件名前缀匹配
+          TAG="${{ github.ref_name }}"
+          LOADER="${{ steps.list.outputs.loader }}"
+          GAME_VERSION="${{ steps.list.outputs.game_version }}"
+          MODRINTH_VERSION="${TAG}-${LOADER}+${GAME_VERSION}"
           echo "modrinth_version=${MODRINTH_VERSION}" >> $GITHUB_OUTPUT
-          echo "file_version=${FILE_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Publish to Platforms
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          files: build/libs/${{ steps.version_strings.outputs.file_version }}.jar
+          files: ${{ steps.list.outputs.jar_file }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') || contains(github.ref_name, 'pre') }}
           modrinth-id: 5HrgYW5Z
@@ -50,6 +67,6 @@ jobs:
           name: ${{ github.ref_name }}
           version: ${{ steps.version_strings.outputs.modrinth_version }}
           version-type: ${{ contains(github.ref_name, 'alpha') && 'alpha' || contains(github.ref_name, 'beta') && 'beta' || contains(github.ref_name, 'rc') && 'rc' || contains(github.ref_name, 'pre') && 'pre' || 'release' }}
-          loaders: fabric
-          game-versions: 1.21.11
+          loaders: ${{ steps.list.outputs.loader }}
+          game-versions: ${{ steps.list.outputs.game_version }}
           java: Java 21
