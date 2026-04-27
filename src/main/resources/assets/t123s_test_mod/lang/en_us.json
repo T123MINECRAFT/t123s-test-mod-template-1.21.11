@@ -1,0 +1,13 @@
+{
+  "itemGroup.t123s_test_mod": "Example Mod Tab",
+  "block.t123s_test_mod.example_block": "Example Block",
+  "item.t123s_test_mod.example_item": "Example Item",
+
+  "t123s_test_mod.configuration.title": "T123's Test Mod Configs",
+  "t123s_test_mod.configuration.section.t123s_test_mod.common.toml": "T123's Test Mod Configs",
+  "t123s_test_mod.configuration.section.t123s_test_mod.common.toml.title": "T123's Test Mod Configs",
+  "t123s_test_mod.configuration.items": "Item List",
+  "t123s_test_mod.configuration.logDirtBlock": "Log Dirt Block",
+  "t123s_test_mod.configuration.magicNumberIntroduction": "Magic Number Text",
+  "t123s_test_mod.configuration.magicNumber": "Magic Number"
+}
