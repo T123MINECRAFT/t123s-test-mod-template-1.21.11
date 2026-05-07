@@ -34,9 +34,6 @@
 		"java": ">=21",
 		"fabric-api": "*"
 	},
-	"breaks": {
-		"minecraft": "1.21.10"
-	},
 	"suggests": {
 		"another-mod": "*"
 	}
