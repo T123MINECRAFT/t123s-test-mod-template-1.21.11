@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "t123s-test-mod",
+	"id": "t123s_test_mod",
 	"version": "${version}",
 	"name": "T123's Test Mod",
 	"description": "咕咕嘎嘎！！！",
@@ -8,11 +8,11 @@
 		"T123Minecraft"
 	],
 	"contact": {
-		"sources": "https://github.com/T123MINECRAFT/t123s-test-mod-template",
-		"issues": "https://github.com/T123MINECRAFT/t123s-test-mod-template/issues"
+		"sources": "https://github.com/T123MINECRAFT/t123s_test_mod-template",
+		"issues": "https://github.com/T123MINECRAFT/t123s_test_mod-template/issues"
 	},
 	"license": "MIT",
-	"icon": "assets/t123s-test-mod/icon.png",
+	"icon": "assets/t123s_test_mod/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -26,13 +26,16 @@
 		]
 	},
 	"mixins": [
-		"t123s-test-mod.mixins.json"
+		"t123s_test_mod.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.0",
 		"minecraft": "1.21.*",
 		"java": ">=21",
 		"fabric-api": "*"
+	},
+	"breaks": {
+		"minecraft": "1.21.10"
 	},
 	"suggests": {
 		"another-mod": "*"

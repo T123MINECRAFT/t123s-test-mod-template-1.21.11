@@ -1,9 +1,9 @@
-name: Publish Mod to GitHub Releases & Modrinth
+name: Publish Mod to GitHub Releases & Modrinth (Fabric)
 
 on:
   push:
     tags:
-      - '[0-9]+*'          # 匹配 X.Y.Z-alpha.x 格式
+      - '[0-9]+*'          # 匹配简洁标签，如 0.1.0-alpha.2
 
 jobs:
   publish:
@@ -31,30 +31,14 @@ jobs:
         id: list
         run: |
           ls -R build/libs/
-          # 找到第一个非 sources/javadoc 的 jar 文件
-          JAR_FILE=$(ls build/libs/t123s-test-mod-*.jar | grep -v sources | grep -v javadoc | head -n1)
-          if [ -z "$JAR_FILE" ]; then
-            echo "No main jar found!"
+          MAIN_JAR=$(ls build/libs/t123s_test_mod-*.jar | grep -v sources | grep -v javadoc | head -n1)
+          if [ -z "$MAIN_JAR" ]; then
+            echo "No main jar found"
             exit 1
           fi
-          echo "jar_file=${JAR_FILE}" >> $GITHUB_OUTPUT
-          
-          # 提取 loader 和 game version
-          BASENAME=$(basename "$JAR_FILE" .jar)
-          # 假设格式：t123s-test-mod-版本-loader+gameversion
-          LOADER=$(echo "$BASENAME" | sed -E 's/.*-([a-z]+)\+.*/\1/')
-          GAME_VERSION=$(echo "$BASENAME" | sed -E 's/.*\+//')
-          echo "loader=${LOADER}" >> $GITHUB_OUTPUT
-          echo "game_version=${GAME_VERSION}" >> $GITHUB_OUTPUT
-
-      - name: Build version strings
-        id: version_strings
-        run: |
-          TAG="${{ github.ref_name }}"
-          LOADER="${{ steps.list.outputs.loader }}"
-          GAME_VERSION="${{ steps.list.outputs.game_version }}"
-          MODRINTH_VERSION="${TAG}-${LOADER}+${GAME_VERSION}"
-          echo "modrinth_version=${MODRINTH_VERSION}" >> $GITHUB_OUTPUT
+          echo "jar_file=${MAIN_JAR}" >> $GITHUB_OUTPUT
+          FULL_VERSION=$(basename "$MAIN_JAR" .jar | sed 's/^t123s_test_mod-//')
+          echo "full_version=${FULL_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Publish to Platforms
         uses: Kir-Antipov/mc-publish@v3.3
@@ -65,8 +49,8 @@ jobs:
           modrinth-id: 5HrgYW5Z
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           name: ${{ github.ref_name }}
-          version: ${{ steps.version_strings.outputs.modrinth_version }}
+          version: ${{ steps.list.outputs.full_version }}
           version-type: ${{ contains(github.ref_name, 'alpha') && 'alpha' || contains(github.ref_name, 'beta') && 'beta' || contains(github.ref_name, 'rc') && 'rc' || contains(github.ref_name, 'pre') && 'pre' || 'release' }}
-          loaders: ${{ steps.list.outputs.loader }}
-          game-versions: ${{ steps.list.outputs.game_version }}
+          loaders: fabric
+          game-versions: 1.21.*        # 请根据实际支持的版本修改
           java: Java 21
